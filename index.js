@@ -41,15 +41,24 @@ module.exports = opts => {
     // change here if it's down
     const insight = "https://insight.kotocoin.info/api";
 
-    const fromAddress = opts.fromAddress;
     const toAddress = opts.toAddress;
     const feeInSat = opts.feeInSat ? parseInt(opts.feeInSat) : 10;
     const fromWif = opts.fromSecret ? ECPair.fromWIF(opts.fromSecret, kotoNet) : null;
+    // below statement does that thing:
+    // If fromAddress was given, use it
+    // Otherwise, derive address from fromWif
+    const fromAddress = opts.fromAddress ? opts.fromAddress : (fromWif ? fromWif.getAddress() : null);
 
     // 80 KOTO
     const minimumTarget = opts.minimumTarget ? parseInt(opts.minimumTarget) : 8e9;
 
-    jsonFetch(insight + "/addr/" + fromAddress + "/utxo")
+    if (!fromAddress) {
+        return Promise.reject("fromAddress or fromSecret must be specified");
+    } else if (!toAddress) {
+        return Promise.reject("toAddress must be specified");
+    }
+
+    return jsonFetch(insight + "/addr/" + fromAddress + "/utxo")
         .then(utxo => {
             if (utxo.length <= 0) {
                 return Promise.reject("No UTXO: cancelling");
@@ -80,7 +89,5 @@ module.exports = opts => {
                 // no private key: display non-signed rawtx
                 return Promise.resolve(txb.buildIncomplete().toHex());
             }
-        })
-        .then(console.log)
-        .catch(console.log);
+        });
 };
