@@ -1,5 +1,3 @@
-const env = process.env;
-
 const zcLib = require("@missmonacoin/bitcoinjs-lib-zcash");
 const TransactionBuilder = zcLib.TransactionBuilder;
 const ECPair = zcLib.ECPair;
