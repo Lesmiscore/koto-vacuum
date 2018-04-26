@@ -16,5 +16,5 @@ npm i
 export FROM_ADDRESS=
 export TO_ADDRESS=
 export FROM_ADDRESS_PRIV=
-node index.js
+npm run start
 ```

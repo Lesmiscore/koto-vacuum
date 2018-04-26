@@ -24,17 +24,6 @@ const kotoNet = {
     "wif": 128
 };
 
-// change here if it's down
-const insight = "https://insight.kotocoin.info/api";
-
-const fromAddress = env.FROM_ADDRESS;
-const toAddress = env.TO_ADDRESS;
-const feeInSat = 10;
-const fromWif = env.FROM_ADDRESS_PRIV ? ECPair.fromWIF(env.FROM_ADDRESS_PRIV, kotoNet) : null;
-
-// 80 KOTO
-const minimumTarget = 8e9;
-
 function jsonFetch(addr) {
     return _fetch(addr).then(e => e.json());
 }
@@ -51,37 +40,52 @@ function postProm(uri, json) {
     });
 }
 
-jsonFetch(insight + "/addr/" + fromAddress + "/utxo")
-    .then(utxo => {
-        if (utxo.length <= 0) {
-            return Promise.reject("No UTXO: cancelling");
-        }
-        // it's time to build transaction
-        let txb = new TransactionBuilder(kotoNet);
-        let totalBalanceSat = 0;
-        utxo.forEach(tx => {
-            const vin = txb.addInput(tx.txid, tx.vout);
-            txb.inputs[vin].value = tx.satoshis;
-            totalBalanceSat += tx.satoshis;
-        });
-        const balanceWoFee = totalBalanceSat - feeInSat;
-        if (balanceWoFee < minimumTarget) {
-            return Promise.reject("Balance is less than target: expected " + minimumTarget + " but " + balanceWoFee);
-        }
-        txb.addOutput(toAddress, balanceWoFee);
+module.exports = opts => {
+    opts = opts || {};
 
-        if (fromWif) {
-            // we have private key
-            for (let i = 0; i < txb.inputs.length; i++)
-                txb.sign(i, fromWif);
-            // broadcast tx
-            return postProm(insight + "/tx/send", {
-                rawtx: txb.build().toHex()
-            }).then(x => x.body.txid);
-        } else {
-            // no private key: display non-signed rawtx
-            return Promise.resolve(txb.buildIncomplete().toHex());
-        }
-    })
-    .then(console.log)
-    .catch(console.log);
+    // change here if it's down
+    const insight = "https://insight.kotocoin.info/api";
+
+    const fromAddress = opts.fromAddress;
+    const toAddress = opts.toAddress;
+    const feeInSat = opts.feeInSat ? parseInt(opts.feeInSat) : 10;
+    const fromWif = opts.fromSecret ? ECPair.fromWIF(opts.fromSecret, kotoNet) : null;
+
+    // 80 KOTO
+    const minimumTarget = opts.minimumTarget ? parseInt(opts.minimumTarget) : 8e9;
+
+    jsonFetch(insight + "/addr/" + fromAddress + "/utxo")
+        .then(utxo => {
+            if (utxo.length <= 0) {
+                return Promise.reject("No UTXO: cancelling");
+            }
+            // it's time to build transaction
+            let txb = new TransactionBuilder(kotoNet);
+            let totalBalanceSat = 0;
+            utxo.forEach(tx => {
+                const vin = txb.addInput(tx.txid, tx.vout);
+                txb.inputs[vin].value = tx.satoshis;
+                totalBalanceSat += tx.satoshis;
+            });
+            const balanceWoFee = totalBalanceSat - feeInSat;
+            if (balanceWoFee < minimumTarget) {
+                return Promise.reject("Balance is less than target: expected " + minimumTarget + " but " + balanceWoFee);
+            }
+            txb.addOutput(toAddress, balanceWoFee);
+
+            if (fromWif) {
+                // we have private key
+                for (let i = 0; i < txb.inputs.length; i++)
+                    txb.sign(i, fromWif);
+                // broadcast tx
+                return postProm(insight + "/tx/send", {
+                    rawtx: txb.build().toHex()
+                }).then(x => x.body.txid);
+            } else {
+                // no private key: display non-signed rawtx
+                return Promise.resolve(txb.buildIncomplete().toHex());
+            }
+        })
+        .then(console.log)
+        .catch(console.log);
+};

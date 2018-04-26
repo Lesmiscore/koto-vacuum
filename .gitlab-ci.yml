@@ -11,5 +11,5 @@ main:
   stage: main
   script:
     - npm i
-    - node index.js || true
+    - npm run start || true
 
