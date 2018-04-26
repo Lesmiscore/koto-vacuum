@@ -35,11 +35,11 @@ function postProm(uri, json) {
     });
 }
 
-module.exports = opts => {
+const result = opts => {
     opts = opts || {};
 
-    // change here if it's down
-    const insight = "https://insight.kotocoin.info/api";
+    // you can change here if it's down
+    const insight = opts.insight ? opt.insight : "https://insight.kotocoin.info/api";
 
     const toAddress = opts.toAddress;
     const feeInSat = opts.feeInSat ? parseInt(opts.feeInSat) : 10;
@@ -53,9 +53,9 @@ module.exports = opts => {
     const minimumTarget = opts.minimumTarget ? parseInt(opts.minimumTarget) : 8e9;
 
     if (!fromAddress) {
-        return Promise.reject("fromAddress or fromSecret must be specified");
+        return Promise.reject("\"fromAddress\" or \"fromSecret\" must be specified");
     } else if (!toAddress) {
-        return Promise.reject("toAddress must be specified");
+        return Promise.reject("\"toAddress\" must be specified");
     }
 
     return jsonFetch(insight + "/addr/" + fromAddress + "/utxo")
@@ -91,3 +91,8 @@ module.exports = opts => {
             }
         });
 };
+
+result.kotoNet = kotoNet;
+result.fetchUsed = _fetch;
+
+module.exports = result;
