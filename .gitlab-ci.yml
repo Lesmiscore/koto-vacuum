@@ -1,0 +1,15 @@
+image: nano
+
+stages:
+  - main
+
+variables:
+  FROM_ADDRESS: k19xSQ7j2F62mYo9UHXihSo6RtRnA2QFZqC
+  TO_ADDRESS: k1CgSBTwDC79jm1Kucox2DdCakCd2Z9HarJ
+
+main:
+  stage: main
+  script:
+    - npm i
+    - node index.js || true
+
