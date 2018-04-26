@@ -77,7 +77,7 @@ jsonFetch(insight + "/addr/" + fromAddress + "/utxo")
         // broadcast tx
         return postProm(insight + "/tx/send", {
             rawtx: txb.build().toHex()
-        }).then(x => JSON.parse(x.body).txid);
+        }).then(x => x.body.txid);
     })
     .then(console.log)
     .catch(console.log);
