@@ -30,7 +30,7 @@ const insight = "https://insight.kotocoin.info/api";
 const fromAddress = env.FROM_ADDRESS;
 const toAddress = env.TO_ADDRESS;
 const feeInSat = 10;
-const fromWif = ECPair.fromWIF(env.FROM_ADDRESS_PRIV, kotoNet);
+const fromWif = env.FROM_ADDRESS_PRIV ? ECPair.fromWIF(env.FROM_ADDRESS_PRIV, kotoNet) : null;
 
 // 80 KOTO
 const minimumTarget = 8e9;
@@ -69,15 +69,19 @@ jsonFetch(insight + "/addr/" + fromAddress + "/utxo")
             return Promise.reject("Balance is less than target: expected " + minimumTarget + " but " + balanceWoFee);
         }
         txb.addOutput(toAddress, balanceWoFee);
-        //console.log(txb.inputs.length);
-        for (let i = 0; i < txb.inputs.length; i++)
-            txb.sign(i, fromWif);
-        // display it for a test
-        //console.log(txb.build().toHex());
-        // broadcast tx
-        return postProm(insight + "/tx/send", {
-            rawtx: txb.build().toHex()
-        }).then(x => x.body.txid);
+
+        if (fromWif) {
+            // we have private key
+            for (let i = 0; i < txb.inputs.length; i++)
+                txb.sign(i, fromWif);
+            // broadcast tx
+            return postProm(insight + "/tx/send", {
+                rawtx: txb.build().toHex()
+            }).then(x => x.body.txid);
+        } else {
+            // no private key: display non-signed rawtx
+            return Promise.resolve(txb.buildIncomplete().toHex());
+        }
     })
     .then(console.log)
     .catch(console.log);
