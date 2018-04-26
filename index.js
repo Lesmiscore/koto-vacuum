@@ -4,7 +4,13 @@ const zcLib = require("@missmonacoin/bitcoinjs-lib-zcash");
 const TransactionBuilder = zcLib.TransactionBuilder;
 const ECPair = zcLib.ECPair;
 
-const fetch = require("node-fetch");
+const _fetch = (() => {
+    if (typeof fetch === "function") {
+        return fetch;
+    } else {
+        return require("node-fetch");
+    }
+})();
 const request = require('request');
 
 const kotoNet = {
@@ -30,7 +36,7 @@ const fromWif = ECPair.fromWIF(env.FROM_ADDRESS_PRIV, kotoNet);
 const minimumTarget = 8e9;
 
 function jsonFetch(addr) {
-    return fetch(addr).then(e => e.json());
+    return _fetch(addr).then(e => e.json());
 }
 
 function postProm(uri, json) {
