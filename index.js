@@ -4,13 +4,8 @@ const zcLib = require("@missmonacoin/bitcoinjs-lib-zcash");
 const TransactionBuilder = zcLib.TransactionBuilder;
 const ECPair = zcLib.ECPair;
 
-const _fetch = (() => {
-    if (typeof fetch === "function") {
-        return fetch;
-    } else {
-        return require("node-fetch");
-    }
-})();
+const _fetch = typeof fetch === "function" ? fetch : require("node-fetch");
+
 const request = require('request');
 
 const kotoNet = {
