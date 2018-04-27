@@ -6,15 +6,17 @@ const uglify = require("gulp-uglify");
 const babel = require("gulp-babel");
 //const compiler = require('google-closure-compiler-js').gulp();
 
-gulp.task('js', function(){
+gulp.task('js', function () {
   return browserify('./index.js')
-  .bundle()
-  .pipe(source('bundle.js'))
-  .pipe(buffer())
-  .pipe(babel({ presets: [['env', {
-    targets: { 'browsers': 'ie 6' }
-  }]]}))
-  .pipe(uglify('mini.js'))
-  .on("error",console.log)
-  .pipe(gulp.dest('./dist/mini.js'));
+    .bundle()
+    .pipe(source('bundle.js'))
+    .pipe(buffer())
+    .pipe(babel({
+      presets: [['env', {
+        targets: { 'browsers': 'ie 6' }
+      }]]
+    }))
+    .pipe(uglify('mini.js'))
+    .on("error", console.log)
+    .pipe(gulp.dest('./dist/mini.js'));
 });
