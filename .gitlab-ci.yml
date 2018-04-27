@@ -13,3 +13,12 @@ main:
     - npm i
     - npm run start || true
 
+dist:
+  stage: main
+  script:
+    - npm i
+    - npm run js
+  artifacts:
+    paths:
+      - dist/
+

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node run.js"
+    "start": "node run.js",
+    "min": "gulp js"
   },
   "author": "nao20010128nao",
   "license": "ISC",
@@ -12,5 +13,13 @@
     "@missmonacoin/bitcoinjs-lib-zcash": "^1.0.0",
     "node-fetch": "^2.1.2",
     "request": "^2.85.0"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.0",
+    "google-closure-compiler-js": "^20180402.0.0",
+    "gulp": "^3.9.1",
+    "gulp-uglify": "^3.0.0",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
   }
 }
