@@ -17,7 +17,7 @@ dist:
   stage: main
   script:
     - npm i
-    - npm run js
+    - npm run min
   artifacts:
     paths:
       - dist/
