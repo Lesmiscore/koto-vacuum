@@ -16,5 +16,5 @@ gulp.task('js', function(){
   }]]}))
   .pipe(uglify('mini.js'))
   .on("error",console.log)
-  .pipe(gulp.dest('./dist/'));
+  .pipe(gulp.dest('./dist/mini.js'));
 });
