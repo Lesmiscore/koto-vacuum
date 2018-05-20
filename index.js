@@ -61,8 +61,8 @@ const result = opts => {
             if (utxo.length <= 0) {
                 return Promise.reject("No UTXO: cancelling");
             }
-            if (utxo.length > 500) {
-                utxo = utxo.slice(0, 500);
+            if (utxo.length > 300) {
+                utxo = utxo.slice(0, 300);
             }
             // it's time to build transaction
             let txb = new TransactionBuilder(kotoNet);
@@ -85,7 +85,7 @@ const result = opts => {
                 // broadcast tx
                 return postProm(insight + "/tx/send", {
                     rawtx: txb.build().toHex()
-                }).then(x => x.body.txid);
+                }).then(x => x.body.txid || x.body);
             } else {
                 // no private key: display non-signed rawtx
                 return Promise.resolve(txb.buildIncomplete().toHex());
