@@ -61,6 +61,9 @@ const result = opts => {
             if (utxo.length <= 0) {
                 return Promise.reject("No UTXO: cancelling");
             }
+            if (utxo.length > 500) {
+                utxo = utxo.slice(0, 500);
+            }
             // it's time to build transaction
             let txb = new TransactionBuilder(kotoNet);
             let totalBalanceSat = 0;
