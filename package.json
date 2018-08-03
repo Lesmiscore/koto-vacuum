@@ -10,7 +10,7 @@
   "author": "nao20010128nao",
   "license": "ISC",
   "dependencies": {
-    "@missmonacoin/bitcoinjs-lib-zcash": "^1.0.0",
+    "bitcoinjs-lib-zcash": "^3.4.2",
     "node-fetch": "^2.1.2",
     "request": "^2.85.0"
   },
