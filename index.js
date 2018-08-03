@@ -1,4 +1,4 @@
-const zcLib = require("@missmonacoin/bitcoinjs-lib-zcash");
+const zcLib = require("bitcoinjs-lib-zcash");
 const TransactionBuilder = zcLib.TransactionBuilder;
 const ECPair = zcLib.ECPair;
 
